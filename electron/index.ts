@@ -20,6 +20,7 @@ import autoUpdate from "./commands/auto-update";
 import { FEATURE_FLAGS } from "../common/feature-flags";
 import settings from "electron-settings";
 import pasteImage from "./commands/paste-image";
+import readTgaPreview from "./commands/read-tga-preview";
 import path from "path";
 
 // INITIALIZATION
@@ -88,6 +89,8 @@ ipcMain.on(ELECTRON_COMMANDS.OPEN_FOLDER, openFolder);
 ipcMain.handle(ELECTRON_COMMANDS.SELECT_FOLDER, selectFolder);
 
 ipcMain.handle(ELECTRON_COMMANDS.SELECT_FILE, selectFile);
+
+ipcMain.handle(ELECTRON_COMMANDS.READ_TGA_PREVIEW, readTgaPreview);
 
 ipcMain.on(ELECTRON_COMMANDS.GET_MODELS_LIST, getModelsList);
 
