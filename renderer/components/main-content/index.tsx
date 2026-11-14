@@ -345,6 +345,7 @@ const MainContent = ({
         imagePath.length > 0 &&
         upscaledImagePath.length > 0 && (
           <SliderView
+            imagePath={imagePath}
             sanitizedImagePath={sanitizedImagePath}
             sanitizedUpscaledImagePath={sanitizedUpscaledImagePath}
             zoomAmount={zoomAmount}
