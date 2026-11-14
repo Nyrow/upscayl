@@ -139,10 +139,12 @@ const MainContent = ({
     const filePath = e.dataTransfer.files[0].path;
     const extension = e.dataTransfer.files[0].name.split(".").at(-1);
     logit("⤵️ Dropped file: ", JSON.stringify({ type, filePath, extension }));
-    if (
-      !type.includes("image") ||
-      !VALID_IMAGE_FORMATS.includes(extension.toLowerCase())
-    ) {
+    const normalizedExtension = extension?.toLowerCase() ?? "";
+    const isSupportedImage = VALID_IMAGE_FORMATS.includes(
+      normalizedExtension as (typeof VALID_IMAGE_FORMATS)[number],
+    );
+    // TGA files are not consistently assigned an image/* MIME type by Windows.
+    if (!isSupportedImage || (!type.includes("image") && normalizedExtension !== "tga")) {
       logit("🚫 Invalid file dropped");
       toast({
         title: t("ERRORS.INVALID_IMAGE_ERROR.TITLE"),
