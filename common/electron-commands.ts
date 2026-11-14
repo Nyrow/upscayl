@@ -9,8 +9,7 @@ const ELECTRON_COMMANDS = {
   DOUBLE_UPSCAYL_PROGRESS: "Send Double Upscayl Progress from Main to Renderer",
   FOLDER_UPSCAYL: "Upscale a Folder",
   FOLDER_UPSCAYL_DONE: "Folder upscaling successful",
-  FOLDER_UPSCAYL_PROGRESS:
-    "Send Folder Upscaling Progress from Main to Renderer",
+  FOLDER_UPSCAYL_PROGRESS: "Send Folder Upscaling Progress from Main to Renderer",
   OPEN_FOLDER: "Open Folder",
   UPSCAYL_VIDEO: "Upscale the Video",
   UPSCAYL_VIDEO_DONE: "Video Upscaling Done",
@@ -30,6 +29,7 @@ const ELECTRON_COMMANDS = {
   PASTE_IMAGE: "Paste Image from clipboard",
   PASTE_IMAGE_SAVE_SUCCESS: "Clipboard Image saved successfully",
   PASTE_IMAGE_SAVE_ERROR: "Clipboard Image save failed",
+  READ_TGA_PREVIEW: "Read TGA preview",
 } as const;
 
 export { ELECTRON_COMMANDS };
