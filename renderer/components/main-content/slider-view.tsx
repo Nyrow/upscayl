@@ -1,26 +1,44 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ReactCompareSlider } from "react-compare-slider";
 import useTranslation from "../hooks/use-translation";
+import { sanitizePath } from "@common/sanitize-path";
+import { loadTgaPreview } from "@/lib/tga-preview";
 
 const SliderView = ({
+  imagePath,
   sanitizedImagePath,
   sanitizedUpscaledImagePath,
   zoomAmount,
 }: {
+  imagePath: string;
   sanitizedImagePath: string;
   sanitizedUpscaledImagePath: string;
   zoomAmount: string;
 }) => {
   const t = useTranslation();
-
   const [backgroundPosition, setBackgroundPosition] = useState("0% 0%");
+  const [originalTgaSrc, setOriginalTgaSrc] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    setOriginalTgaSrc("");
+    if (!imagePath.toLowerCase().endsWith(".tga")) return;
+    loadTgaPreview(imagePath)
+      .then((preview) => { if (!cancelled) setOriginalTgaSrc(preview.src); })
+      .catch((error: unknown) => console.error("Failed to decode original TGA for comparison:", error));
+    return () => { cancelled = true; };
+  }, [imagePath]);
 
   const handleMouseMove = useCallback((e: any) => {
-    const { left, top, width, height } = e.target.getBoundingClientRect();
-    const x = ((e.pageX - left) / width) * 100;
-    const y = ((e.pageY - top) / height) * 100;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
     setBackgroundPosition(`${x}% ${y}%`);
   }, []);
+
+  const isTga = imagePath.toLowerCase().endsWith(".tga");
+  const originalSrc = isTga ? originalTgaSrc : "file:///" + sanitizedImagePath;
+  const upscaledSrc = "file:///" + sanitizedUpscaledImagePath;
 
   return (
     <ReactCompareSlider
@@ -29,18 +47,13 @@ const SliderView = ({
           <p className="absolute bottom-1 left-1 rounded-md bg-black p-1 text-sm font-medium text-white opacity-30">
             {t("APP.SLIDER.ORIGINAL_TITLE")}
           </p>
-
           <img
-            /* USE REGEX TO GET THE FILENAME AND ENCODE IT INTO PROPER FORM IN ORDER TO AVOID ERRORS DUE TO SPECIAL CHARACTERS */
-            src={"file:///" + sanitizedImagePath}
+            src={originalSrc}
             alt={t("APP.SLIDER.ORIGINAL_TITLE")}
             onMouseMove={handleMouseMove}
-            style={{
-              objectFit: "contain",
-              backgroundPosition: "0% 0%",
-              transformOrigin: backgroundPosition,
-            }}
-            className={`h-full w-full bg-gradient-to-br from-base-300 to-base-100 transition-transform group-hover:scale-[${zoomAmount}%]`}
+            draggable="false"
+            style={{ width: "100%", height: "100%", objectFit: "contain", transformOrigin: backgroundPosition }}
+            className="block"
           />
         </>
       }
@@ -50,18 +63,12 @@ const SliderView = ({
             {t("APP.SLIDER.UPSCAYLED_TITLE")}
           </p>
           <img
-            /* USE REGEX TO GET THE FILENAME AND ENCODE IT INTO PROPER FORM IN ORDER TO AVOID ERRORS DUE TO SPECIAL CHARACTERS */
-            src={"file:///" + sanitizedUpscaledImagePath}
+            src={upscaledSrc}
             alt={t("APP.SLIDER.UPSCAYLED_TITLE")}
-            style={{
-              objectFit: "contain",
-              backgroundPosition: "0% 0%",
-              transformOrigin: backgroundPosition,
-            }}
             onMouseMove={handleMouseMove}
-            className={`h-full w-full bg-gradient-to-br from-base-300 to-base-100 transition-transform group-hover:scale-[${
-              zoomAmount || "100%"
-            }%]`}
+            draggable="false"
+            style={{ width: "100%", height: "100%", objectFit: "contain", transformOrigin: backgroundPosition }}
+            className="block"
           />
         </>
       }
