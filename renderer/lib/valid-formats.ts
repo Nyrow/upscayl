@@ -4,6 +4,7 @@ export const VALID_IMAGE_FORMATS = [
   "jpeg",
   "jfif",
   "webp",
+  "tga",
 ] as const;
 
 export type ImageFormat = (typeof VALID_IMAGE_FORMATS)[number];
